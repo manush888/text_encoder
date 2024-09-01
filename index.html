@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encoder/Decoder</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #4CAF50;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            resize: none;
+        }
+
+        .buttons {
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button:disabled {
+            background-color: #ddd;
+            cursor: not-allowed;
+        }
+
+        .note {
+            font-size: 14px;
+            color: #777;
+            margin-top: -10px;
+            margin-bottom: 20px;
+        }
+
+        .output-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #2196F3;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .copy-btn:hover {
+            background-color: #0b7dda;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Encoder/Decoder</h1>
+
+<h2>Input Text</h2>
+<textarea id="inputText" placeholder="Enter your text here..." oninput="toggleButtons()"></textarea>
+
+<div class="buttons">
+    <button id="encodeBtn" onclick="encode()" disabled>Encode</button>
+    <button id="decodeBtn" onclick="decode()" disabled>Decode</button>
+    <button onclick="clearText()">Clear</button>
+</div>
+
+<h2>Output</h2>
+<div class="output-container">
+    <textarea id="outputText" placeholder="Result will appear here..." readonly></textarea>
+    <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
+</div>
+
+<script>
+    function encode() {
+        const input = document.getElementById('inputText').value;
+        const words = input.split('++');
+        const encodedWords = words.map(word => {
+            return word.split('').map(char => {
+                return char.toLowerCase().charCodeAt(0) - 96; // a=1, b=2, ..., z=26
+            }).join('+');
+        });
+        document.getElementById('outputText').value = encodedWords.join('++');
+    }
+
+    function decode() {
+        const input = document.getElementById('inputText').value;
+        const words = input.split('++');
+        const decodedWords = words.map(word => {
+            return word.split('+').map(num => {
+                return String.fromCharCode(parseInt(num) + 96); // 1=a, 2=b, ..., 26=z
+            }).join('');
+        });
+        document.getElementById('outputText').value = decodedWords.join(' ');
+    }
+
+    function clearText() {
+        document.getElementById('inputText').value = '';
+        document.getElementById('outputText').value = '';
+        toggleButtons();
+    }
+
+    function toggleButtons() {
+        const input = document.getElementById('inputText').value.trim();
+        document.getElementById('encodeBtn').disabled = input === '';
+        document.getElementById('decodeBtn').disabled = input === '';
+    }
+
+    function copyToClipboard() {
+        const outputText = document.getElementById('outputText');
+        outputText.select();
+        outputText.setSelectionRange(0, 99999); // For mobile devices
+        document.execCommand("copy");
+        alert("Copied to clipboard");
+    }
+</script>
+
+</body>
+</html>
